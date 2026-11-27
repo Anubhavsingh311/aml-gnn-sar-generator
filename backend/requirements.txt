@@ -1,0 +1,7 @@
+numpy>=1.26
+pandas>=2.1
+xgboost>=2.0,<4
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+pydantic>=2.5

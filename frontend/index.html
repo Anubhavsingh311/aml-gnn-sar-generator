@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AML Transaction Scorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 18 9 9l4 5 8-10" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><b>AML Scorer</b></div>
+  <div class="right">
+    <span id="status" class="chip" role="status" aria-live="polite">Waking</span>
+    <span id="elapsed" class="mono dim"></span>
+    <button id="retry" class="btn ghost" hidden>Retry</button>
+    <button id="theme" class="btn ghost" aria-label="Toggle light or dark theme">Theme</button>
+    <a class="btn ghost" href="#" id="gh">GitHub</a>
+  </div>
+</header>
+<div id="demoBanner" class="alert" hidden><b>DEMO DATA - not model output</b></div>
+<main>
+  <p id="wake" class="dim">The free server sleeps when idle. The first request can take about 60 seconds. You can pick a file while it wakes.</p>
+
+  <details id="help" class="panel">
+    <summary>How to read this</summary>
+    <p><b>Flagged</b> is the balanced alert: on the test period of IBM HI-Small (synthetic, 5.08M transactions, 0.10% illicit) about 78% of flagged transfers were illicit (precision) and about 64% of all illicit transfers were caught (recall).</p>
+    <p><b>High-recall</b> is the wider net: recall about 87%, but precision only about 10%, so roughly 9 in 10 alerts are false positives. Every flagged row is also high-recall. A row can be neither. Precision depends on how rare illicit activity is in your file.</p>
+    <p>Treat results as a triage queue for human review, not accusations. Scoring is retrospective (it uses transactions before and after each one), the model was trained on synthetic data only, and it is not for real compliance decisions.</p>
+  </details>
+
+  <section class="panel">
+    <label id="drop" class="drop" tabindex="0">
+      <input id="file" type="file" accept=".csv" hidden>
+      <b>Drop a transactions CSV here, or click to choose</b>
+      <span class="dim">IBM HI-Small layout, header row required, 10+ columns, up to 150,000 rows, ideally several days of data.</span>
+    </label>
+    <div id="vcard" class="vcard" hidden></div>
+    <div class="controls">
+      <label>Rows to return <select id="limit"><option>100</option><option>250</option><option selected>500</option><option>1000</option><option>2000</option></select></label>
+      <button id="score" class="btn" disabled>Score transactions</button>
+      <button id="cancel" class="btn ghost" hidden>Cancel</button>
+    </div>
+    <div id="prog" class="prog" role="status" aria-live="polite" hidden><div class="bar"></div><span id="stage"></span> <span id="sec" class="mono"></span></div>
+    <div id="err" class="err" role="alert" hidden></div>
+  </section>
+
+  <section id="empty" class="steps">
+    <div><b>1. Upload</b><span class="dim">Choose a CSV. Your browser checks it first.</span></div>
+    <div><b>2. Score</b><span class="dim">The model rates every transfer from 0 to 1.</span></div>
+    <div><b>3. Review</b><span class="dim">Work down the ranked list of alerts.</span></div>
+  </section>
+
+  <section id="results" hidden>
+    <div id="kpis" class="kpis"></div>
+    <p id="banner" class="alert" hidden></p>
+    <div class="bar-row">
+      <div id="tabs" class="seg" role="tablist"></div>
+      <input id="q" type="search" placeholder="Search account or bank" aria-label="Search account or bank">
+      <label>Per page <select id="per"><option>25</option><option>50</option><option>100</option></select></label>
+      <button id="export" class="btn ghost">Export CSV</button>
+    </div>
+    <div class="tw"><table id="tbl"><thead></thead><tbody></tbody></table></div>
+    <p id="none" class="dim" hidden></p>
+    <div class="pager"><button id="prev" class="btn ghost">Previous</button><span id="pinfo" class="mono dim"></span><button id="next" class="btn ghost">Next</button></div>
+    <p id="note" class="dim small"></p>
+  </section>
+</main>
+<script src="script.js"></script>
+</body>
+</html>
